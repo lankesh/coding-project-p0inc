@@ -1,0 +1,470 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "FastAPI",
+        "version": "0.1.0"
+    },
+    "paths": {
+        "/schedule/availability/": {
+            "post": {
+                "summary": "Set Availability",
+                "operationId": "set_availability_schedule_availability__post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SetAvailabilityRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SetAvailabilityResponseBody"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Overlapping availability slot found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailureResponseBody"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationFailureResponseBody"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailureResponseBody"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/schedule/availability/{user_email}/{date}": {
+            "get": {
+                "summary": "Get Availability",
+                "operationId": "get_availability_schedule_availability__user_email___date__get",
+                "parameters": [
+                    {
+                        "name": "user_email",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "User Email"
+                        }
+                    },
+                    {
+                        "name": "date",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetAvailabilityResponseBody"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/schedule/overlap/{first_user_email}/{second_user_email}/{date}": {
+            "get": {
+                "summary": "Get Overlap",
+                "operationId": "get_overlap_schedule_overlap__first_user_email___second_user_email___date__get",
+                "parameters": [
+                    {
+                        "name": "first_user_email",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "First User Email"
+                        }
+                    },
+                    {
+                        "name": "second_user_email",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Second User Email"
+                        }
+                    },
+                    {
+                        "name": "date",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FindOverlapResponseBody"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "FailureResponseBody": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "title": "Success",
+                        "default": false
+                    },
+                    "message": {
+                        "type": "string",
+                        "title": "Message",
+                        "default": ""
+                    },
+                    "data": {
+                        "type": "null",
+                        "title": "Data"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "data"
+                ],
+                "title": "FailureResponseBody"
+            },
+            "FailureResponseBodyData": {
+                "properties": {
+                    "errors": {
+                        "items": {
+                            "$ref": "#/components/schemas/ValidationErrorModel"
+                        },
+                        "type": "array",
+                        "title": "Errors"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "errors"
+                ],
+                "title": "FailureResponseBodyData"
+            },
+            "FindOverlapResponseBody": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "title": "Success",
+                        "default": true
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/FindOverlapResponseBodyData"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "data"
+                ],
+                "title": "FindOverlapResponseBody"
+            },
+            "FindOverlapResponseBodyData": {
+                "properties": {
+                    "first_user_email": {
+                        "type": "string",
+                        "format": "email",
+                        "title": "First User Email"
+                    },
+                    "second_user_email": {
+                        "type": "string",
+                        "format": "email",
+                        "title": "Second User Email"
+                    },
+                    "date": {
+                        "type": "string",
+                        "title": "Date"
+                    },
+                    "slots": {
+                        "items": {
+                            "type": "object"
+                        },
+                        "type": "array",
+                        "title": "Slots"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "first_user_email",
+                    "second_user_email",
+                    "date",
+                    "slots"
+                ],
+                "title": "FindOverlapResponseBodyData"
+            },
+            "GetAvailabilityResponseBody": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "title": "Success",
+                        "default": true
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/GetAvailabilityResponseBodyData"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "data"
+                ],
+                "title": "GetAvailabilityResponseBody"
+            },
+            "GetAvailabilityResponseBodyData": {
+                "properties": {
+                    "user_email": {
+                        "type": "string",
+                        "format": "email",
+                        "title": "User Email"
+                    },
+                    "date": {
+                        "type": "string",
+                        "title": "Date"
+                    },
+                    "slots": {
+                        "items": {
+                            "type": "object"
+                        },
+                        "type": "array",
+                        "title": "Slots"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "user_email",
+                    "date",
+                    "slots"
+                ],
+                "title": "GetAvailabilityResponseBodyData"
+            },
+            "HTTPValidationError": {
+                "properties": {
+                    "detail": {
+                        "items": {
+                            "$ref": "#/components/schemas/ValidationError"
+                        },
+                        "type": "array",
+                        "title": "Detail"
+                    }
+                },
+                "type": "object",
+                "title": "HTTPValidationError"
+            },
+            "SetAvailabilityRequest": {
+                "properties": {
+                    "user_email": {
+                        "type": "string",
+                        "format": "email",
+                        "title": "User Email"
+                    },
+                    "date": {
+                        "type": "string",
+                        "title": "Date"
+                    },
+                    "start_time": {
+                        "type": "string",
+                        "title": "Start Time"
+                    },
+                    "end_time": {
+                        "type": "string",
+                        "title": "End Time"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "user_email",
+                    "date",
+                    "start_time",
+                    "end_time"
+                ],
+                "title": "SetAvailabilityRequest"
+            },
+            "SetAvailabilityResponseBody": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "title": "Success",
+                        "default": true
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/SetAvailabilityResposeData"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "data"
+                ],
+                "title": "SetAvailabilityResponseBody"
+            },
+            "SetAvailabilityResposeData": {
+                "properties": {
+                    "user_email": {
+                        "type": "string",
+                        "format": "email",
+                        "title": "User Email"
+                    },
+                    "date": {
+                        "type": "string",
+                        "title": "Date"
+                    },
+                    "start_time": {
+                        "type": "string",
+                        "title": "Start Time"
+                    },
+                    "end_time": {
+                        "type": "string",
+                        "title": "End Time"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "user_email",
+                    "date",
+                    "start_time",
+                    "end_time"
+                ],
+                "title": "SetAvailabilityResposeData"
+            },
+            "ValidationError": {
+                "properties": {
+                    "loc": {
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ]
+                        },
+                        "type": "array",
+                        "title": "Location"
+                    },
+                    "msg": {
+                        "type": "string",
+                        "title": "Message"
+                    },
+                    "type": {
+                        "type": "string",
+                        "title": "Error Type"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "loc",
+                    "msg",
+                    "type"
+                ],
+                "title": "ValidationError"
+            },
+            "ValidationErrorModel": {
+                "properties": {
+                    "field": {
+                        "type": "string",
+                        "title": "Field"
+                    },
+                    "error": {
+                        "type": "string",
+                        "title": "Error"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "field",
+                    "error"
+                ],
+                "title": "ValidationErrorModel"
+            },
+            "ValidationFailureResponseBody": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "title": "Success",
+                        "default": false
+                    },
+                    "message": {
+                        "type": "string",
+                        "title": "Message",
+                        "default": ""
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/FailureResponseBodyData"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "data"
+                ],
+                "title": "ValidationFailureResponseBody"
+            }
+        }
+    }
+}
