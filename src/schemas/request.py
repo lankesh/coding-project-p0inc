@@ -8,6 +8,10 @@ from pydantic import (
 import re
 
 
+class SetUserProfileRequest(BaseModel):
+    email: EmailStr
+    name: str
+
 class SetAvailabilityRequest(BaseModel):
     user_email: EmailStr
     date: str

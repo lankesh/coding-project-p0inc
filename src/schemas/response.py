@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any, List, Optional
 from pydantic import BaseModel, EmailStr
 
 
@@ -49,3 +49,14 @@ class FailureResponseBody(BaseModel):
 
 class ValidationFailureResponseBody(FailureResponseBody):
     data: FailureResponseBodyData
+
+
+class GetUserProfileResponseBodyData(BaseModel):
+    email: EmailStr
+    name: str
+
+class SetUserProfileResponseBody(SuccessResponseBody):
+    data: GetUserProfileResponseBodyData
+
+class GetUserProfileResponseBody(SuccessResponseBody):
+    data: Optional[GetUserProfileResponseBodyData]

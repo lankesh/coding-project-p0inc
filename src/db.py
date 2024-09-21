@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from src.utils.time_util import convert_to_time
 
@@ -37,3 +37,30 @@ class CalendarDatabase:
 
 
 calendar_db = CalendarDatabase()
+
+class UserProfileDatabase:
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            # data is of type: Dict[str, Dict]
+            # e.g. of record:
+            #    data = {"johndoe@example.com":{"name": "John Doe", "address": "New York"}
+            cls._instance.data = {}
+        return cls._instance
+
+    def upsert_user_profile(self, user_details: dict):
+        email = user_details.get("email")
+        if not email:
+            raise Exception("email attribute is required")
+        self.data[email] = user_details
+
+    def get_user_profile(self, user_email: str) -> Optional[dict]:
+        return self.data.get(user_email)
+
+    def reset(self):
+        self.data.clear()
+
+
+user_profile_db = UserProfileDatabase()

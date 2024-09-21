@@ -9,6 +9,7 @@ from src.middlewares.exception_handlers import (
     validation_exception_handler,
 )
 from src.routes.schedule import router as schedule_router
+from src.routes.user import router as user_router
 
 
 app = FastAPI()
@@ -20,3 +21,4 @@ app.add_exception_handler(CustomException, custom_exception_handler)
 
 # Include the routes
 app.include_router(schedule_router)
+app.include_router(user_router)
